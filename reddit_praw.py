@@ -1,3 +1,4 @@
+#Importing the praw
 import praw
 
 reddit = praw.Reddit(client_id = '1klU7HAgTZHxLg' ,
@@ -6,18 +7,20 @@ reddit = praw.Reddit(client_id = '1klU7HAgTZHxLg' ,
                      password = 'Kuldeep@123',
                      user_agent = 'praw')
 
+keyword = raw_input("Enter your Keyword: ")
 num = input("Enter the number of reddits you want to fetch (max): ")
 
-subreddit = reddit.subreddit('python')
+subreddit = reddit.subreddit(keyword)
+
 hot_python = subreddit.hot(limit = int(num))
-
-counter =1
-
+entryCounter =1
 for entry in hot_python:
     if not entry.stickied:
-        print (str(counter) +": " +entry.title)
+        print (str(entryCounter) +": " +entry.title)
         print ("Up Votes: "+str(entry.ups)+ "    Down Votes: " +str(entry.downs)+ "   Visited by the user: " +str(entry.visited))
         print "*-"*30
+        entryCounter+=1
+
 
         commentsCounter=1
         comments = entry.comments
@@ -34,7 +37,15 @@ for entry in hot_python:
                     print ""
                     repliesCounter += 1
 
+        entry.comments.replace_more(limit=0)
+        # limiting to 15 results to save output
+        for comment in entry.comments.list()[:15]:
+            print(20 * '#')
+            print('Parent ID:', comment.parent())
+            print('Comment ID:', comment.id)
+            # limiting output for space-saving-sake, feel free to not do this
+            print(comment.body[:200])
+
         print "\n"
-        counter+=1
 
 print "#-*"*20
